@@ -1,0 +1,12 @@
+Here is what has to be done
+Find all needed .h and .c files needed by the data format to create a library libRN.so
+From libRN.so use TTree::MakeClass to form a RNData.h class. Then derive a class from
+this class named RNDataAnalysis.h which has all of the analysis methods.
+
+(will use a makefile next)
+Making the necessary .o files:
+
+rootcint -f RNDict.cc -c (All the .h files)
+ROOTLIBS='root-config --libs'
+g++ -c -fPIC -Wall (each .cpp file) $ROOTLIBS
+g++ -shared -O (all object files) -o libRN.so
