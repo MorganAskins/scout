@@ -1,0 +1,36 @@
+- Configure requires libtcl8.5 or less, adding 8.6 to tcl_versions in configure (line 16394)
+- Run ./configure; make; sudo make install
+
+Notes from James:
+V. INSTALLING SIS3150 DRIVERS
+  a. Drivers are in tarball sisusb-1.2-003.tar.gz
+  b. Unzip the tarball to a director with no spaces in the name (else it won't compile)
+  d. ./configure --prefix=/your/install/path/SIS --with-usb-headerdir=/usr/include --with-usb-libdir=/lib/x86_64-linux-gnu (NOTE: --with-usb-* flags required for
+           ubuntu 12.04. Make sure you point them to the right directories. --with-usb flags not required in ubuntu 10.04
+           Also, replace the --prefix with the directory you wish to install in. I prefer to use somewhere I have permissions (/home/comp/ instead of /opt/lib for 
+           instance) so that I don't run into permission issues when compiling
+  e. make
+  f. make install (sudo if your --prefix dir requires root permissions)
+  g. Set the rules to automatically give the desired permissions to the USB device (in this example, 777) as follows (http://www.shallowsky.com/blog/linux/kernel/lucid-udev.html)
+    cd /etc/udev/rules.d
+    sudo your_favorite_text_editor 60-sis3150.rules
+    SUBSYSTEM=="usb", ATTR{idVendor}=="1657", ATTR{idProduct}=="3150", MODE="0777"
+
+Va. TESTING SIS3150 DRIVERS - (added by RWB 12/3/12)
+  a. Go to directory where you installed the driver (--prefix)
+  b. cd into the /bin directory
+  c. run the vmeaccess.tcl script (./vmeaccess.tcl)
+  d. In upper right panel, you should see an interface that looks something like: "001/003 0x1657 0x3150"
+    - If you don't, check that the vme crate is on and plugged into the computer via usb
+    - If it is and you still don't, check the linux-install readme of the 1.2-003 drivers for clues
+  e. Double click on the interface in the upper-right window. After a few seconds, this should enable the buttons in the rest of the panel
+  f. Go to the lower left panel ("single-shot VME transfers").
+    - In the Address window, type the base address of one of the 3302 modules. For example, in CCI-2 (and Ge-2)'s current configuration, the 3302 modules start at 0x50000000 and 
+      go up like so:
+      0x50000000, 0x58000000, 0x60000000, 0x68000000... etc.
+    - If you are unsure about this, see ch. 3 of the SIS 3302 user manual entitled "VME Addressing"
+    - Now, add "4" to the end of the hex # to get the "ModuleID. and firmware Revision" register
+      - e.g. for the first card, the adress would be: 0x50000004
+  g. click the "Read" button. You should get a hex # in the "Data" window where the first 4 #'s represent the module ID (should be 3302) and the last 4 represent the firmware revision
+     (as of 12/12 - either 1408 or 1511 on the 18 CCI-2 SIS3302 modules)
+
