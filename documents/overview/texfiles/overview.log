@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Arch Linux) (preloaded format=pdflatex 2015.12.7)  3 FEB 2016 11:31
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Arch Linux) (preloaded format=pdflatex 2015.12.7)  11 FEB 2016 12:20
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -562,15 +562,15 @@ Package pdftex.def Info: img/flat_scout.png used on input line 44.
 [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./img/scout_render.png> <.
-/img/DecayChain.pdf>]
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 49.
- (/usr/share/texmf-dist/tex/latex/base/omscmr.fd
+/img/DecayChain.pdf>] [2 <./img/flat_scout.png>]
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 95.
+
+(/usr/share/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 49.
-
-[2 <./img/flat_scout.png>] [3] (./texfiles/overview.aux) ) 
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 95.
+ [3] (./texfiles/overview.aux) ) 
 Here is how much of TeX's memory you used:
  3025 strings out of 493054
  39894 string characters out of 6140586
@@ -579,15 +579,14 @@ Here is how much of TeX's memory you used:
  8408 words of font info for 31 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  37i,6n,23p,241b,191s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/share/texmf-dis
-t/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-dist/fonts/type1/
-public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfont
-s/cm/cmr10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb>
-</usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/tex
-mf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texmf-dist/fonts/ty
-pe1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/ams
-fonts/cm/cmsy7.pfb>
-Output written on ./texfiles/overview.pdf (3 pages, 548330 bytes).
+</usr/share/texmf-dist/fonts/type1/public/amsfo
+nts/cm/cmbx12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.
+pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-dist/fon
+ts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texmf-dist/fonts/type1/public
+/amsfonts/cm/cmr7.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cms
+y10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb>
+Output written on ./texfiles/overview.pdf (3 pages, 549806 bytes).
 PDF statistics:
  87 PDF objects out of 1000 (max. 8388607)
  56 compressed objects within 1 object stream

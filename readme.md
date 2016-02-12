@@ -13,3 +13,5 @@ To do list
 - Estimate natural radon backgrounds on the acrylic from air exposure
 - Estimate total sensitivity based on radon + muon backgrounds
 - Finalize designs
+  - Get Designs and work order to Dave
+  - Order parts based on Dave's thoughts on the design

@@ -44,26 +44,6 @@ accommodate quick-connect ports for gas and liquid exchange.
 \includegraphics[width=0.5\textwidth]{flat_scout.png}
 \end{center}
 
-\section{Component List}
-\begin{itemize}
-  \item 1 metric tonne lead shield on Stand: 2'x2'x5' tall
-  \item Waste drum (55 Gallon)
-  \item Acrylic Measurement Vessel (~ 5 liters)
-  \item Acrylic mobile mixing vessel
-  \item Fluid transfer hose with hand valves on both ends
-  \item Gas transfer hose with hand valves on both ends
-  \item 4x3" Photomultipliers
-  \item Desktop High Voltage Supply (Caen)
-  \item VME Crate
-  \item VME Waveform Digitizer (sis3316 ADC)
-  \item VME USB interface (sis3150)
-  \item Intel NUC for data recording
-  \item External backup storage
-  \item Magnetic Stirrer
-  \item Chemical Spill Kit
-  \item Tubing to connect
-\end{itemize}
-
 \section{Data Acquisition}
 The four photomultipliers are powered by a desktop CAEN high voltage power supply. The supply
 has four channels, so the voltage can be individually adjusted for proper gain matching. The
@@ -73,6 +53,14 @@ will be used. The trigger scheme in software can either be set to sum the four c
 trigger on individual channels. There is not currently a way to require two channels to go
 above threshold, but this may be looked into in the future. The coincidence trigger will be
 done offline using timing and energy cuts.
+
+\section{Sensitivity}
+With the assumption that the LAB is clean to begin with, limtis will be set based on the background
+rates, detector volume, and live time. The coincidence window for Bi-Po will help to reject most single
+events except those that fall in the same random coincidence window. Based on the energy resolution
+of the final design, an energy cut can help to further reduce the background event rate. For a detector
+volume of about 5 liters, the sensitivity for a 1 hour run would be about $10^{-10}$ g/g for each
+isotope, with $^{238}$U having a slightly better result due to the shorter half-life.
 
 \section{Procedure}
 \begin{enumerate}
@@ -101,5 +89,25 @@ done offline using timing and energy cuts.
   \item Clean the hoses and mixing vessel.
   \item {[}It may be possible to clean the AV by filling and rinsing with UPW or LAB{]}
 \end{enumerate}
+
+\section{Component List}
+\begin{itemize}
+  \item 1 metric tonne lead shield on Stand: 2'x2'x5' tall
+  \item Waste drum (55 Gallon)
+  \item Acrylic Measurement Vessel (~ 5 liters)
+  \item Acrylic mobile mixing vessel
+  \item Fluid transfer hose with hand valves on both ends
+  \item Gas transfer hose with hand valves on both ends
+  \item 4x3" Photomultipliers
+  \item Desktop High Voltage Supply (Caen)
+  \item VME Crate
+  \item VME Waveform Digitizer (sis3316 ADC)
+  \item VME USB interface (sis3150)
+  \item Intel NUC for data recording
+  \item External backup storage
+  \item Magnetic Stirrer
+  \item Chemical Spill Kit
+  \item Tubing to connect
+\end{itemize}
 
 \end{document}
