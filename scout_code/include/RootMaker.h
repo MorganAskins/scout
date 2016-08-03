@@ -22,7 +22,8 @@ class RootMaker
   // In Tree
   ULong64_t timestamp; // Holds 64-bit timestamp (adc counts)
   UInt_t** gate;      // gate[num_channels][num_gates]
-  UShort_t** waveform; // Number of samples
+  //UShort_t** waveform; // Number of samples
+  int** waveform;
   //uint64_t timestamp;
   //uint32_t** gate;
   //uint16_t** waveform;

@@ -26,11 +26,11 @@ void RootMaker::setup_tree(uint32_t evts, uint32_t chans, uint32_t format, uint3
   if(format & 0b10)
     num_gates += 2;
   this->gate = new UInt_t*[chans];
-  this->waveform = new UShort_t*[chans];
+  this->waveform = new int*[chans];
   for(uint32_t i=0; i<chans; i++)
   {
     this->gate[i] = new UInt_t[num_gates];
-    this->waveform[i] = new UShort_t[this->samples];
+    this->waveform[i] = new int[this->samples];
   }
   this->num_gates = num_gates;
 
@@ -47,7 +47,7 @@ void RootMaker::setup_tree(uint32_t evts, uint32_t chans, uint32_t format, uint3
     dataTree->Branch(gname.c_str(), this->gate[i], gtype.c_str());
 
     std::string wfname = "waveform" + std::to_string(i);
-    std::string wftype = wfname + "[" + std::to_string(this->samples) + "]/s";
+    std::string wftype = wfname + "[" + std::to_string(this->samples) + "]/I";
     dataTree->Branch(wfname.c_str(), this->waveform[i], wftype.c_str());
   }
 
@@ -88,7 +88,7 @@ void RootMaker::load_event(event& ev)
     for(uint32_t sam=0; sam < this->samples; sam++)
     {
       //this->waveform[ch][sam] = static_cast<unsigned long long>(cur_chan.waveform[sam]);
-      this->waveform[ch][sam] = static_cast<UShort_t>(cur_chan.waveform[sam]);
+      this->waveform[ch][sam] = static_cast<int>(cur_chan.waveform[sam]);
     }
   }
   dataTree->Fill();
