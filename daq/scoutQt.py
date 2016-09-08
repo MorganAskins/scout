@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 from PyQt4 import QtCore, QtGui 
 import sys, os, traceback
 import json, time
