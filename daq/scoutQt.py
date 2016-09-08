@@ -6,8 +6,10 @@ import argparse
 
 from modules.scout_run import run_tab
 from modules.scout_settings import settings_tab
-from modules.scout_scope import scope_tab
-from modules.scout_viewer import viewer_tab
+try:
+    from modules.scout_viewer import viewer_tab
+except ImportError:
+    print 'problem with PyRoot'
 from modules.scout_connection import sis_connection
 from modules.scout_hv import hv_tab
 
@@ -57,14 +59,16 @@ class scout_gui(QtGui.QMainWindow):
             if self.connection.sis_address() is not None:
                 self.tabs.addTab( run_tab(self.connection), "Run" )
                 self.tabs.addTab( settings_tab(self.connection), "Settings" )
-        self.tabs.addTab( viewer_tab(), "Event Viewer" )
+        try:
+            self.tabs.addTab( viewer_tab(), "Event Viewer" )
+        except NameError:
+            pass
         self.tabs.addTab( hv_tab(), "High Voltage" )
         self.setCentralWidget(self.tabs)
         self.show()
         #self.tabs.show()
 
     def exit(self):
-        print 'hello?'
         QtGui.QApplication.exit()
 
     def closeEvent(self, event):
