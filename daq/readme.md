@@ -1,6 +1,12 @@
 Scout Gui
 =========
 
+## Dependencies
+For high voltage control: CAENHV libraries
+For event viewer: root with PyRoot enabled
+For daq: struck sis3316 attached via ethernet, dhcpd
+
+
 Gui will be qt based
 The scout gui is in place for a user to:
 
