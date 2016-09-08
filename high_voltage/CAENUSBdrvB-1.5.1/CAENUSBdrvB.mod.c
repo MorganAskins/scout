@@ -4,61 +4,51 @@
 
 MODULE_INFO(vermagic, VERMAGIC_STRING);
 
-struct module __this_module
+__visible struct module __this_module
 __attribute__((section(".gnu.linkonce.this_module"))) = {
- .name = KBUILD_MODNAME,
- .init = init_module,
+	.name = KBUILD_MODNAME,
+	.init = init_module,
 #ifdef CONFIG_MODULE_UNLOAD
- .exit = cleanup_module,
+	.exit = cleanup_module,
 #endif
- .arch = MODULE_ARCH_INIT,
+	.arch = MODULE_ARCH_INIT,
 };
 
 static const struct modversion_info ____versions[]
 __used
 __attribute__((section("__versions"))) = {
-	{ 0x14522340, "module_layout" },
-	{ 0x4f1939c7, "per_cpu__current_task" },
-	{ 0xd2037915, "dev_set_drvdata" },
-	{ 0xd691cba2, "malloc_sizes" },
-	{ 0xab2a6ec4, "usb_deregister_dev" },
-	{ 0x3758301, "mutex_unlock" },
-	{ 0xffc7c184, "__init_waitqueue_head" },
-	{ 0xced66309, "usb_deregister" },
-	{ 0x4bf79039, "__mutex_init" },
-	{ 0xea147363, "printk" },
-	{ 0x85f8a266, "copy_to_user" },
-	{ 0xb4390f9a, "mcount" },
-	{ 0xdd508520, "usb_register_dev" },
-	{ 0x3461b433, "usb_control_msg" },
-	{ 0xfee8a795, "mutex_lock" },
-	{ 0x748caf40, "down" },
-	{ 0xf0fdf6cb, "__stack_chk_fail" },
-	{ 0x2611da1, "usb_bulk_msg" },
-	{ 0x69b3b9c9, "usb_clear_halt" },
-	{ 0x2044fa9e, "kmem_cache_alloc_trace" },
-	{ 0x37a0cba, "kfree" },
-	{ 0x3f1899f1, "up" },
-	{ 0x251ce55e, "usb_register_driver" },
-	{ 0x3302b500, "copy_from_user" },
-	{ 0xa92a43c, "dev_get_drvdata" },
+	{ 0xef1c5950, __VMLINUX_SYMBOL_STR(module_layout) },
+	{ 0x348f4c47, __VMLINUX_SYMBOL_STR(usb_deregister) },
+	{ 0x39abc14e, __VMLINUX_SYMBOL_STR(usb_register_driver) },
+	{ 0xc87dfcd7, __VMLINUX_SYMBOL_STR(usb_control_msg) },
+	{ 0xf8db47ed, __VMLINUX_SYMBOL_STR(mutex_unlock) },
+	{ 0x487eb250, __VMLINUX_SYMBOL_STR(mutex_lock) },
+	{ 0xa202a8e5, __VMLINUX_SYMBOL_STR(kmalloc_order_trace) },
+	{ 0x2c2436d8, __VMLINUX_SYMBOL_STR(usb_register_dev) },
+	{ 0xa2cf7a06, __VMLINUX_SYMBOL_STR(kmem_cache_alloc_trace) },
+	{ 0x33cc9f44, __VMLINUX_SYMBOL_STR(kmalloc_caches) },
+	{ 0x8cecd344, __VMLINUX_SYMBOL_STR(usb_deregister_dev) },
+	{ 0x37a0cba, __VMLINUX_SYMBOL_STR(kfree) },
+	{ 0x353ee66d, __VMLINUX_SYMBOL_STR(usb_clear_halt) },
+	{ 0x4f8b5ddb, __VMLINUX_SYMBOL_STR(_copy_to_user) },
+	{ 0xdb7305a1, __VMLINUX_SYMBOL_STR(__stack_chk_fail) },
+	{ 0x27e1a049, __VMLINUX_SYMBOL_STR(printk) },
+	{ 0x3c2cb7bd, __VMLINUX_SYMBOL_STR(usb_bulk_msg) },
+	{ 0x4f6b400b, __VMLINUX_SYMBOL_STR(_copy_from_user) },
+	{ 0x37d7c7ec, __VMLINUX_SYMBOL_STR(current_task) },
+	{ 0xedceffc7, __VMLINUX_SYMBOL_STR(__mutex_init) },
+	{ 0x9e88526, __VMLINUX_SYMBOL_STR(__init_waitqueue_head) },
+	{ 0x78e739aa, __VMLINUX_SYMBOL_STR(up) },
+	{ 0x6dc6dd56, __VMLINUX_SYMBOL_STR(down) },
+	{ 0xbdfb6dbb, __VMLINUX_SYMBOL_STR(__fentry__) },
 };
 
 static const char __module_depends[]
 __used
 __attribute__((section(".modinfo"))) =
-"depends=";
+"depends=usbcore";
 
-MODULE_ALIAS("usb:v0547p1002d*dc*dsc*dp*ic*isc*ip*");
-MODULE_ALIAS("usb:v21E1p0000d*dc*dsc*dp*ic*isc*ip*");
-MODULE_ALIAS("usb:v21E1p0001d*dc*dsc*dp*ic*isc*ip*");
-MODULE_ALIAS("usb:v21E1p0005d*dc*dsc*dp*ic*isc*ip*");
-
-MODULE_INFO(srcversion, "8D9E1150BB67F8447FD6216");
-
-static const struct rheldata _rheldata __used
-__attribute__((section(".rheldata"))) = {
-	.rhel_major = 6,
-	.rhel_minor = 8,
-	.rhel_release = 641,
-};
+MODULE_ALIAS("usb:v0547p1002d*dc*dsc*dp*ic*isc*ip*in*");
+MODULE_ALIAS("usb:v21E1p0000d*dc*dsc*dp*ic*isc*ip*in*");
+MODULE_ALIAS("usb:v21E1p0001d*dc*dsc*dp*ic*isc*ip*in*");
+MODULE_ALIAS("usb:v21E1p0005d*dc*dsc*dp*ic*isc*ip*in*");

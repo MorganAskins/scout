@@ -1,1 +1,1 @@
-cmd_/home/morgan/scout/high_voltage/CAENUSBdrvB-1.5.1/CAENUSBdrvB.ko := cp /home/morgan/scout/high_voltage/CAENUSBdrvB-1.5.1/CAENUSBdrvB.ko.unsigned /home/morgan/scout/high_voltage/CAENUSBdrvB-1.5.1/CAENUSBdrvB.ko
+cmd_/home/morgan/scout/high_voltage/CAENUSBdrvB-1.5.1/CAENUSBdrvB.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/morgan/scout/high_voltage/CAENUSBdrvB-1.5.1/CAENUSBdrvB.ko /home/morgan/scout/high_voltage/CAENUSBdrvB-1.5.1/CAENUSBdrvB.o /home/morgan/scout/high_voltage/CAENUSBdrvB-1.5.1/CAENUSBdrvB.mod.o
