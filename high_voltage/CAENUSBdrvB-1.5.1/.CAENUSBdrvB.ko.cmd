@@ -1,0 +1,1 @@
+cmd_/home/morgan/scout/high_voltage/CAENUSBdrvB-1.5.1/CAENUSBdrvB.ko := cp /home/morgan/scout/high_voltage/CAENUSBdrvB-1.5.1/CAENUSBdrvB.ko.unsigned /home/morgan/scout/high_voltage/CAENUSBdrvB-1.5.1/CAENUSBdrvB.ko

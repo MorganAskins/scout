@@ -1,0 +1,214 @@
+/*****************************************************************************/
+/*                                                                           */
+/*                  --- CAEN SpA - Computing Division ---                    */
+/*                                                                           */
+/*   CAEN GECO 2020 Release Notes                                            */
+/*                                                                           */
+/*   Rel. 1.7.2   - July        2016                                         */
+/*   Rel. 1.7.1   - July        2016                                         */
+/*   Rel. 1.7.0   - March       2016                                         */
+/*   Rel. 1.6.3   - January     2016                                         */
+/*   Rel. 1.6.2   - April       2015                                         */
+/*   Rel. 1.6.0   - February    2015                                         */
+/*   Rel. 1.5.0   - September   2014                                         */
+/*   Rel. 1.4.0   - March       2014                                         */
+/*   Rel. 1.3.0   - January     2014                                         */
+/*   Rel. 1.2.0   - November    2013                                         */
+/*   Rel. 1.1.3   - October     2013                                         */
+/*   Rel. 1.0.1   - June        2013                                         */
+/*   Rel. 1.0.0   - May         2013                                         */
+/*                                                                           */
+/*****************************************************************************/
+ 
+
+  Description
+  -----------
+
+  This document is updated for every official release of the CAEN GECO 2020
+  and it contains various information specific to this software which 
+  can not be found in the User's Manual, available together with the software 
+  or on the CAEN web site: www.caen.it.
+
+
+  System Requirements
+ -------------------
+ 
+ - CAEN HV Power Supply System SY4527 / SY5527 / SY4527LC / SY5527LC, V65XX HV, NIM /DESKTOP HV, DT55XX HV
+ - Linux 32bit and 64bit
+ - glibc 2.9 or higher
+  
+ What's New in Rel. 1.7.2
+ --------------------------
+  
+  Bug Fixes
+  ----------
+  - resolved bug in Log for V65XX, NIM / DESKTOP HV, DT55XX HV
+  
+ What's New in Rel. 1.7.1
+ --------------------------
+  
+  Bug Fixes
+  ----------
+  - fixed connection issue
+  
+ What's New in Rel. 1.7.0
+ --------------------------
+
+  New Features and Important Notes
+  --------------------------------
+  - added support for DT55XXE HV devices
+      
+  Bug Fixes
+  ----------
+  - resolved bugs in Log feature
+
+ What's New in Rel. 1.6.3
+ --------------------------
+
+  Bug Fixes
+  ----------
+ - resolved bug in Log for SY4527/SY5527
+ - resolved bug in VMon setting (wrong resolution setting)
+
+What's New in Rel. 1.6.2
+ --------------------------
+
+  Bug Fixes
+  ----------
+  - resolved bug in IMonZoom behavior for V65XX devices
+  - resolved bug in Log for V65XX devices
+  - updated CAENVMELib to version 2.41.0 
+
+ 
+ What's New in Rel. 1.6.0
+ --------------------------
+
+  New Features and Important Notes
+  --------------------------------
+  - added Offset Setting feature, for VSet and ISet parameters
+  - added basic Log feature for V65XX, NIM / DESKTOP HV, DT55XX HV
+  - added support for rack HV Power Supply R14XXET (included in NIM / DESKTOP HV family devices)
+      
+  Bug Fixes
+  ----------
+  - resolved bug in Reset Flag Configuration bits, which set a wrong mask
+  - resolved bug in SY 4527 / SY 5527 Log, which in some cases misses writing lines
+  - resolved bug in DT55xx, which caused a memory leak while using device
+ 
+ 
+ What's New in Rel. 1.5.0
+ --------------------------
+
+  New Features and Important Notes
+  --------------------------------
+  - added IMon Range support for DT55XX devices
+  - changed Reset Flag Configuration description, for a better usability
+  
+  Bug Fixes
+  ----------
+  - resolved bug in setting out of range parameters for SY4527 / SY 5527 devices, which caused a crash in
+    the application
+
+
+ What's New in Rel. 1.4.0
+ --------------------------
+
+  New Features and Important Notes
+  --------------------------------
+  - added a new configuration wizard for the TripInt/TripExt parameters in SY 4527 / SY 5527 boards
+  - added a new "Autodetect" feature for scan network in order to find SY 4527 / SY 5527 mainframes
+  - added a new switch button to control ON/OFF parameters in boards easily, instead of comboboxes
+  - added red colorizing for Ipwr values in "Tech Info" dialog, when current exceed the maximum value 
+    allowed for the power supply module (for SY 4527 / SY 5527 mainframes)
+      
+  Bug Fixes
+  ----------
+  - resolved bug with SY 4527 / SY 5527 mainframes when connection is lost during boards discovering.
+    The dialog stucked, waiting for all boards timeouts; now it raises an error immediately and closes
+  - resolved bug with NIM devices, which didn't show the current monitor zoom on-the-fly; now it is
+    showed with two different parameters
+  - resolved bug with DT55xx, which does not show correctly parameters resolution
+  - resolved bug with DT55xx, which causes bad rounded VMax values
+  - resolved bug with NIM / DESKTOP HV devices, which display a wrong "Alarm" parameter value
+  - resolved bug with heterogeneous devices connected, which might stuck software at disconnection
+  - resolved bad overlapping numbers graphical issue, when using Custom View
+  - resolved bad parameter buttons alignment, when configuring view
+        
+
+ What's New in Rel. 1.3.0
+ --------------------------
+
+  New Features and Important Notes
+  --------------------------------
+  - improved functionalities for SY 4527 / SY 5527 Advanced Features - Scripting:
+    -- added a new text editor to write scripts
+    -- moved to Wizard the old graphical script editor
+    -- added a new dock window which describes what action is executing
+    -- added start,stop and pause buttons
+    
+  Bug Fixes
+  ----------
+  - resolved bug in SY 4527 / SY 5527 Advanced Features - Scripting - load script
+  - resolved bug in custom view set multiple parameters
+  - resolved bug in custom view "Pw" parameter color feature
+    
+
+ What's New in Rel. 1.2.0
+ --------------------------
+
+  New Features and Important Notes
+  --------------------------------
+  - added support for DT55XX HV devices
+
+  Bug Fixes
+  ----------
+  - resolved bug in a bad graphical behaviour, when clicking
+      "advanced features" button with SY4527 devices
+
+ What's New in Rel. 1.1.3
+ --------------------------
+
+  New Features and Important Notes
+  --------------------------------
+  - added support for ethernet NIM / DESKTOP HV devices connection
+  - added support for SY4527LC / SY5527LC mainframes
+
+  Bug Fixes
+  ----------
+  - resolved bug at connection, for large setup of SY4527 / SY5527 mainframes
+  - resolved bug in group set dialog
+
+
+ What's New in Rel. 1.0.1
+ --------------------------
+
+   Bug Fixes
+  ----------
+  - resolved bug in NIM / Destkop events mode
+  - resolved bug in V65xx data writing
+        
+
+ What's New in Rel. 1.0.0
+ --------------------------
+
+   New Features and Important Notes
+   --------------------------------
+   - First Release 
+ 
+  
+
+  Determining Your Software Release
+  ---------------------------------
+
+  To determine the complete software release of the CAEN GECO 2020
+  installed in your machine, you can use the relevant menu choice of the
+  program.
+
+
+  How to get support
+  ------------------
+
+  Our Software Support Group is available for questions, support and any other 
+  software related issue concerning CAEN Power Supplies; for software support
+  visit the page www.caen.it/computing/support.php.
+
