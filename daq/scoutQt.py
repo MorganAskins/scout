@@ -12,6 +12,7 @@ except ImportError:
     print 'problem with PyRoot'
 from modules.scout_connection import sis_connection
 from modules.scout_hv import hv_tab
+from modules.scout_pulser import pulser_tab
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -64,6 +65,7 @@ class scout_gui(QtGui.QMainWindow):
         except NameError:
             pass
         self.tabs.addTab( hv_tab(), "High Voltage" )
+        self.tabs.addTab( pulser_tab(), "Laser Diode Pulser" )
         self.setCentralWidget(self.tabs)
         self.show()
         #self.tabs.show()

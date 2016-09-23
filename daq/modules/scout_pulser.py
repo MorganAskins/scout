@@ -4,144 +4,74 @@ import time
 import copy
 from duepulser.duepulser_comms import PulserCommunication
 
-def sditer(dic):
-    return iter(sorted(dic.iteritems()))
 
-class hv_tab(QtGui.QWidget):
+class pulser_tab(QtGui.QWidget):
     def __init__(self):
         QtGui.QWidget.__init__(self)
-        self.hv = pycaen()
-        self.layout = QtGui.QVBoxLayout()
-        self.hvGetTable = hv_table(self.hv)
-        self.hvSetTable = hv_table2(self.hv)
-        self.layout.addWidget(self.hvGetTable)
-        self.layout.addWidget(self.hvSetTable)
-        self._onoffswitch_()
-        self.setLayout(self.layout)
+        fbox = pulser_form()
+        self.setLayout(fbox)
 
-    def _onoffswitch_(self):
-        on_switch = QtGui.QPushButton("All Channels Power ON")
-        on_switch.clicked.connect(self.hvSetTable.poweron)
-        self.layout.addWidget(on_switch)
-        off_switch = QtGui.QPushButton("All Channels Power OFF")
-        off_switch.clicked.connect(self.hvSetTable.poweroff)
-        self.layout.addWidget(off_switch)
+class pulser_form(QtGui.QFormLayout):
+    def __init__(self):
+        QtGui.QFormLayout.__init__(self)
+        self.duepulser = PulserCommunication()
+        self.__build_form__()
 
-class hv_table(QtGui.QTableWidget):
-    def __init__(self, hvcaen):
-        self.hv = hvcaen
-        self.num_chan = 4 #todo ask caen for this number
-        # One row for setting, one row for getting, if contains Mon cant set
-        self._setup_dicts()
-        QtGui.QTableWidget.__init__(self, self.num_chan, len(self.getdata))
-        # self._make_table()
-        # Add a refresh timer which redraws the table values (ie _make_table)
-        self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self._refresh_)
-        self.timer.start(1000)
+    def __build_form__(self):
+        # Find serial button
+        self.find_serial_bt = QtGui.QPushButton("Find Arduino")
+        self.find_serial_bt.clicked.connect(self.__find_serial__)
+        self.serialname = QtGui.QLineEdit()
+        self.serialname.setReadOnly(True)
+        self.addRow(self.find_serial_bt, self.serialname)
+        # Serial connect button
+        self.connect_serial_bt = QtGui.QPushButton("Connect")
+        self.connect_serial_bt.clicked.connect(self.__connect__)
+        self.connectstatus = QtGui.QLineEdit()
+        self.connectstatus.setReadOnly(True)
+        self.addRow(self.connect_serial_bt, self.connectstatus)
+        # Set Frequency
+        self.set_freq_bt = QtGui.QPushButton("Set Frequency")
+        self.set_freq_bt.clicked.connect(self.__set_frequency__)
+        self.freqvalue = QtGui.QLineEdit()
+        self.addRow(self.set_freq_bt, self.freqvalue)
+        # Set Cycles
+        self.set_cycle_bt = QtGui.QPushButton("Set Cycles")
+        self.set_cycle_bt.clicked.connect(self.__set_cycles__)
+        self.cyclevalue = QtGui.QLineEdit()
+        self.addRow(self.set_cycle_bt, self.cyclevalue)
+        # On button / Off button
+        self.on_bt = QtGui.QPushButton("Pulser ON")
+        self.on_bt.clicked.connect(self.__pulser_on__)
+        self.off_bt = QtGui.QPushButton("Pulser OFF")
+        self.off_bt.clicked.connect(self.__pulser_off__)
+        self.addRow(self.on_bt, self.off_bt)
 
-    def _refresh_(self):
-        self._make_table()
+    def __find_serial__(self):
+        self.duepulser.findSerial()
+        self.serialname.setText(str(self.duepulser.port))
 
-    def _setup_dicts(self):
-        # This table is non-editable, here is a list of the params to show
-        self.getdata = {}
-        params = ['VMon', 'IMonL', 'IMonH', 'Pw']
-        for item in self.hv.param_list:
-            if item in params:
-                self.getdata[item] = [0]*self.num_chan
-        self._retrievedata()
+    def __connect__(self):
+        self.ret = self.duepulser.connectSerial()
+        self.connectstatus.setText(str(self.duepulser.connected))
 
-    def _retrievedata(self):
-        for item in self.getdata:
-            for ch in range(self.num_chan):
-                self.getdata[item][ch] = self.hv.GetParameter(ch, item)
+    def __set_frequency__(self):
+        freq = int(self.freqvalue.text())
+        self.ret = self.duepulser.setFrequency(freq)
+        self.status_update()
 
-    def _make_table(self):
-        '''
-        Block out anything that starts with Mon, and throw away Status (for now)
-        '''
-        skip = 'Status'
-        self._retrievedata()
-        horHeaders = []
-        faded = QtGui.QColor(150,210,230)
-        for col, (param, val_list) in enumerate(sditer(self.getdata)):
-            horHeaders.append(param)
-            for ch in range(self.num_chan):
-                getvalue = val_list[ch]
-                if type(getvalue) is float:
-                    vstring = '%.2f' % getvalue
-                else:
-                    vstring = str(getvalue)
-                newitem = QtGui.QTableWidgetItem(vstring)
-                newitem.setFlags(QtCore.Qt.ItemIsEnabled)
-                newitem.setBackground(faded)
-                self.setItem(ch, col, newitem)
-        self.setHorizontalHeaderLabels(horHeaders)
+    def __set_cycles__(self):
+        cycles = int(self.cyclevalue.text())
+        self.ret = self.duepulser.setCycles(cycles)
+        self.status_update()
 
-class hv_table2(QtGui.QTableWidget):
-    def __init__(self, hvcaen):
-        self.hv = hvcaen
-        self.num_chan = 4 #todo ask caen for this number
-        # One row for setting, one row for getting, if contains Mon cant set
-        self._setup_dicts()
-        QtGui.QTableWidget.__init__(self, self.num_chan, len(self.setdata))
-        self._make_table()
-        self.itemChanged.connect(self._senddata)
-        # self._make_table()
-        # Add a refresh timer which redraws the table values (ie _make_table)
-        #self.timer = QtCore.QTimer()
-        #self.timer.timeout.connect(self._refresh_)
-        #self.timer.start(1000)
+    def __pulser_on__(self):
+        self.ret = self.duepulser.pulserOn()
+        self.status_update()
 
-    def poweron(self):
-        for ch in range(self.num_chan):
-            self.data_dict['Pw'][ch].setText("1")
+    def __pulser_off__(self):
+        self.ret = self.duepulser.pulserOff()
+        self.status_update()
 
-    def poweroff(self):
-        for ch in range(self.num_chan):
-            self.data_dict['Pw'][ch].setText("0")
-
-    def _setup_dicts(self):
-        # This table is non-editable, here is a list of the params to show
-        self.setdata = {}
-        notparams = ['VMon', 'IMonL', 'IMonH', 'Status']
-        for item in self.hv.param_list:
-            if item not in notparams:
-                self.setdata[item] = [0]*self.num_chan
-        self._retrievedata()
-
-    def _update_dict(self):
-        for item in self.setdata:
-            for ch in range(self.num_chan):
-                mytype = type(self.setdata[item][ch])
-                self.setdata[item][ch] = mytype(self.data_dict[item][ch].text())
-
-    def _senddata(self):
-        self._update_dict()
-        for item, val_list in sditer(self.setdata):
-            for ch in range(self.num_chan):
-                self.hv.SetParameter(ch, item, val_list[ch])
-
-    def _retrievedata(self):
-        for item in self.setdata:
-            for ch in range(self.num_chan):
-                self.setdata[item][ch] = self.hv.GetParameter(ch, item)
-
-    def _make_table(self):
-        self.data_dict = copy.deepcopy(self.setdata)
-        horHeaders = []
-        faded = QtGui.QColor(150,210,230)
-        for col, (param, val_list) in enumerate(sditer(self.setdata)):
-            horHeaders.append(param)
-            for ch in range(self.num_chan):
-                getvalue = val_list[ch]
-                if type(getvalue) is float:
-                    vstring = '%.2f' % getvalue
-                else:
-                    vstring = str(getvalue)
-                ''' Format is set (get) '''
-                newitem = QtGui.QTableWidgetItem(vstring)
-                self.data_dict[param][ch] = newitem
-                self.setItem(ch, col, newitem)
-        self.setHorizontalHeaderLabels(horHeaders)
+    def status_update(self):
+        self.connectstatus.setText(str(self.ret))
