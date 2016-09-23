@@ -1,0 +1,3 @@
+[submodule "daq/modules/duepulser"]
+	path = daq/modules/duepulser
+	url = git@github.com:MorganAskins/arduino_due_pulser.git
