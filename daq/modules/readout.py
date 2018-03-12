@@ -45,7 +45,7 @@ def readout_loop(dev, dest, channels, runtime, stderr, info, opts = {} ):
 			dev.mem_toggle()
 			
 			if not quiet:
-				stderr.write('\r') #cursor to pos. 0
+				#stderr.write('\r') #cursor to pos. 0
 				sp = next(spinner)  
 			
 			for ch in channels:
@@ -60,13 +60,12 @@ def readout_loop(dev, dest, channels, runtime, stderr, info, opts = {} ):
 				#stderr.write(' %d bytes' % total_bytes)
                                 mbytes = total_bytes/1.0e6
                                 mbps = mbytes / elapsed_time
-                                # This events is hardcoded not real!!
-                                # Scout only with 4 pmt
                                 events = total_bytes/active_channels/event_size
                                 evrate = events / elapsed_time
-                                msg = ' %.3f MB at %.3f MB/s {%.1f events at %.1f Hz}' % \
-                                        (mbytes, mbps, events, evrate)
+                                msg = ' %.3f MB at %.3f MB/s {%.1f events at %.1f Hz} [Time: %0.0f / %0.0f]\r' % \
+                                        (mbytes, mbps, events, evrate,elapsed_time,runtime)
 				stderr.write(msg)
+                                stderr.flush()
 					
 		except KeyboardInterrupt:
 			exit(0)
@@ -126,6 +125,8 @@ def main(host, port, filename, chans, runtime, stderr=sys.stderr, info={}):
         sys.stderr = stderr
 	chunksize = 1024*1024
 	opts = {'chunk_size': chunksize/4 }
+
+        success = True
 	
 	# Open the file
 	if filename is '-':
@@ -139,16 +140,21 @@ def main(host, port, filename, chans, runtime, stderr=sys.stderr, info={}):
 		else:
 			raise ValueError("%s exists and not empty. Not going to overwrite it." 
 				" Specify another filename manually." % filename )
+        try:
+            dev = sis3316.Sis3316_udp(host, port)
+            dev.open()
+            dev.arm() #Morgan ... not sure if I should arm here
+	    dev.mem_toggle() #flush the device memory to not to read a large chunk of old data
+	    readout_loop(dev, dest, chans, runtime, stderr, info, opts)
+        except:
+            success = False
 	
-	dev = sis3316.Sis3316_udp(host, port)
-	dev.open()
-        dev.arm() #Morgan ... not sure if I should arm here
-	dev.mem_toggle() #flush the device memory to not to read a large chunk of old data
-	
-	readout_loop(dev, dest, chans, runtime, stderr, info, opts)
-        dev.close()
+        try:
+            dev.close()
+        except:
+            success = False
         dev.__del__()
-
+        return success
 
 if __name__ == "__main__":
   try: 

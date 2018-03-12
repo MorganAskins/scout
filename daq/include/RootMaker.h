@@ -5,6 +5,7 @@
 #include <TFile.h>
 #include <DataReader.h>
 #include <string>
+#include <vector>
 #include <sstream>
 #include <channel.h>
 #include <event.h>
@@ -29,15 +30,17 @@ class RootMaker
   // Header info
   uint32_t evts;
   uint32_t chans;
+  std::vector<uint16_t> chan_list;
   uint32_t format;
   uint32_t samples;
   uint32_t num_gates;
   // private member functions
   void header_tree();
+  uint16_t chidx_flip(uint16_t);
 public:
   RootMaker(std::string oname);
   ~RootMaker();
-  void setup_tree(uint32_t, uint32_t, uint32_t, uint32_t);
+  void setup_tree(uint32_t, std::vector<uint16_t>, uint32_t, uint32_t);
   void load_event(event&);
 };
 

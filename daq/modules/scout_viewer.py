@@ -109,12 +109,14 @@ class viewer_tab(QtGui.QWidget):
 
     def plot(self):
         event = int(self.event.text())
-        waves = self.sroot.get_waves(event)
+        names, waves = self.sroot.get_waves(event)
         timeaxis = [i for i in range(len(waves[0]))] 
         self.fig.clear()
         self.axes = self.fig.add_subplot(111)
-        for wave in waves:
-            self.axes.plot(timeaxis, wave)
+        wavedict = dict(zip(names, waves))
+        for nm, wave in sorted(wavedict.iteritems()):
+            self.axes.plot(timeaxis, wave, label=nm)
+        self.axes.legend()
         self.canvas.draw()
 
 
@@ -132,7 +134,9 @@ class scoutroot():
     def get_waves(self, event):
         # This is a test of functionality
         self.tree.GetEvent(event)
+        nlist = [it.GetName() for it in self.tree.GetListOfLeaves()
+                if not it.GetName().find('waveform')]
         wflist= [list(self.tree.__getattr__(it.GetName())) for it
                 in self.tree.GetListOfLeaves()
                 if not it.GetName().find('waveform')]
-        return wflist
+        return nlist, wflist 

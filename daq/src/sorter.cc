@@ -51,6 +51,8 @@ void sorter::header()
   this->chan_size = first_event.channels[0].channel_size_in_bytes;
   this->format = first_event.channels[0].format;
   this->samples = first_event.channels[0].waveform.size();
+  for( uint32_t ch=0; ch < this->chans; ch++ )
+      this->chan_list.push_back(first_event.channels[ch].channel_id);
 
   binreader::writeu32(this->outfile, this->evts);
   binreader::writeu32(this->outfile, this->chans);
@@ -61,10 +63,7 @@ void sorter::header()
 
 void sorter::write_sorted()
 {
-  // This is a test
-  rMaker->setup_tree(this->evts, this->chans, this->format, this->samples);
-  // Debug, 10 events
-  int counter = 0;
+  rMaker->setup_tree(this->evts, this->chan_list, this->format, this->samples);
   for (auto& kv : this->all_events)
   {
     kv.second.sort();
@@ -74,8 +73,5 @@ void sorter::write_sorted()
       for (auto& v : kv.second.channels)
         v.write_channel(this->outfile);
     }
-    //counter ++;
-    //if ( counter >= 10 )
-    //  break;
   }
 }

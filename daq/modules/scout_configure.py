@@ -87,19 +87,21 @@ class scout_configure():
         self.add_toggle_data('extern_ts_clr_ena', 1)
         self.add_toggle_data('extern_trig_ena', 1)
         self.add_toggle_data('feedback_int_as_ext', 1)
+        self.add_toggle_data('record_waveforms', 1)
         for ch in range(16):
-            self.add_toggle_data('ch_'+str(ch)+'_enable', 1)
-            self.add_ranged_data('ch_'+str(ch)+'_threshold', 10, 0, 10000) # don't know max
+            self.add_toggle_data('ch_'+str(ch)+'_enable', 0)
+            self.add_ranged_data('ch_'+str(ch)+'_threshold', 500, 0, 65535) # don't know max
             self.add_ranged_data('ch_'+str(ch)+'_hithreshold', 120000, 0, 200000)
-            self.add_ranged_data('ch_'+str(ch)+'_gain', 0, 0, 3)
-            self.add_ranged_data('ch_'+str(ch)+'_dacoffset', 0, 0, 1000) # not sure max
+            self.add_ranged_data('ch_'+str(ch)+'_gain', 1, 0, 3)
+            self.add_ranged_data('ch_'+str(ch)+'_dacoffset', 52000, 0, 65535)
             self.add_ranged_data('ch_'+str(ch)+'_triggerdelay', 20, 0, 1024)
             self.add_ranged_data('ch_'+str(ch)+'_cfd_ena', 3, 0, 3)
-            self.add_toggle_data('ch_'+str(ch)+'_trig_enable', 1)
+            self.add_toggle_data('ch_'+str(ch)+'_trig_enable', 0)
             self.add_toggle_data('ch_'+str(ch)+'_hisuppress_enable', 1)
             self.add_ranged_data('ch_'+str(ch)+'_mawgap', 4, 0, 32)
             self.add_ranged_data('ch_'+str(ch)+'_mawpeak', 8, 0, 32)
             self.add_ranged_data('ch_'+str(ch)+'_out_pulse', 4, 0, 32)
+            self.add_toggle_data('ch_'+str(ch)+'_invert', 0 )
 
         for gr in range(4):
             self.add_toggle_data('gr_'+str(gr)+'_enable', 1)
@@ -131,7 +133,7 @@ class scout_configure():
 
         self.add_ranged_data('ch_format', 1, 0, 16)
         self.add_toggle_data('extern_trig', 1)
-        self.add_toggle_data('invert', 1)
+        #self.add_toggle_data('invert', 1)
         self.add_ranged_data('coincidence', 2, 1, 16)
         self.add_toggle_data('lemo_ti_to_te', 1)
         self.add_toggle_data('int_feedback_select_register', 1)
@@ -153,14 +155,24 @@ class scout_configure():
         ''' Board flags '''
         dev_flags = ['nim_ti_as_te', 'extern_ts_clr_ena', 'extern_trig_ena', 'feedback_int_as_ext']
         self.dev.flags = [ flag for flag in dev_flags if td[flag] == 1]
-        ch_flag_options = ['extern_trig', 'invert']
-        chflags = [ flag for flag in ch_flag_options if td[flag] == 1 ]
+        allch_flag_options = ['extern_trig']
+        allchflags = [ flag for flag in allch_flag_options if td[flag] == 1 ]
         # Coincidence Tables ... n choose k permutations here
         coinc_level = self.look_rdata('coincidence')
-        channels = [ ch for ch in range(16) if td['ch_'+str(ch)+'_enable'] == 1 ]
+        ## Swap hack
+        def idx_swapper(idx):
+            gid = int(idx/4)
+            cid = idx % 4
+            swapbox = [1,0,3,2]
+            swapcid = swapbox[cid]
+            return gid*4 + swapcid
+        ##
+        ## Swap hack changes channels
+        channels = [ ch for ch in range(16) if (td['ch_'+str(ch)+'_enable'] == 1)]
+        sw_channels = [ idx_swapper(ch) for ch in range(16) if (td['ch_'+str(ch)+'_enable'] == 1)]
         groups = [ gr for gr in range(4) if td['gr_'+str(gr)+'_enable'] == 1]
-        num_channels = len(channels)
-        cp_maker = coincidence_permutations(channels, coinc_level)
+        num_channels = len(sw_channels)
+        cp_maker = coincidence_permutations(sw_channels, coinc_level)
         coinc_table_address = cp_maker.bitarray
         # Trigger Coincidence Lookup Table Control Register
         self.dev.write(0x64, 0x80000004)
@@ -172,7 +184,7 @@ class scout_configure():
             # Trigger Coincidence Lookup Table Data Register
             self.dev.write(0x6c, 1)
         # Trigger mask
-        mask = chan_to_bit(channels)
+        mask = chan_to_bit(sw_channels)
         self.dev.write(0x68, mask)
         
         # 0x74 LEMO TI to TE
@@ -187,28 +199,38 @@ class scout_configure():
         # trigger on, followed by a 27-bit running sum to trigger on
 
         # Turn on sample saving for group 1
-        gate_window = self.look_rdata('gate_window')
-        sample_size = gate_window & 0xFFFE
-        sample_value = 0x0 + (sample_size << 16)
-        self.dev.write(0x1020, sample_value)
+        #gate_window = self.look_rdata('gate_window')
+        #sample_size = gate_window & 0xFFFE
+        #sample_value = 0x0 + (sample_size << 16)
+        #self.dev.write(0x1020, sample_value)
 
         ###############################
+
         for ch in self.dev.channels:
-            if (ch.idx in channels) and (ch.gid in groups):
+            if (ch.idx in sw_channels):
+                swidx = 'ch_'+str(idx_swapper(ch.idx))
+                # Swap hack, does it work here?
+                # Here are the things that need swapping
+                # flags
+                if td[swidx+'_invert'] == 1:
+                    ch.flags = allchflags + ['invert']
+                else:
+                    ch.flags = allchflags
+                ch.event_format_mask = self.look_rdata('ch_format')
+                ch.intern_trig_delay = self.look_rdata(swidx+'_triggerdelay')
+                ch.trig.cfd_ena = self.look_rdata(swidx+'_cfd_ena') 
+                ch.trig.enable = td[swidx+'_trig_enable'] 
+                ch.trig.high_suppress_ena = td[swidx+'_hisuppress_enable'] 
+                ch.trig.maw_gap_time = self.look_rdata(swidx+'_mawgap') 
+                ch.trig.maw_peaking_time = self.look_rdata(swidx+'_mawpeak') 
+                ch.trig.threshold = self.look_rdata(swidx+'_threshold') + 0x8000000
+                ch.trig.high_threshold = self.look_rdata(swidx+'_hithreshold') + 0x8000000
+                ch.trig.out_pulse_length = self.look_rdata(swidx+'_out_pulse')
+            if (ch.idx in channels):
                 idx = 'ch_'+str(ch.idx)
                 ch.gain = self.look_rdata(idx+'_gain')
                 ch.dac_offset = self.look_rdata(idx+'_dacoffset')
-                ch.flags = chflags
-                ch.event_format_mask = self.look_rdata('ch_format')
-                ch.intern_trig_delay = self.look_rdata(idx+'_triggerdelay')
-                ch.trig.cfd_ena = self.look_rdata(idx+'_cfd_ena') 
-                ch.trig.enable = td[idx+'_enable'] 
-                ch.trig.high_suppress_ena = td[idx+'_hisuppress_enable'] 
-                ch.trig.maw_gap_time = self.look_rdata(idx+'_mawgap') 
-                ch.trig.maw_peaking_time = self.look_rdata(idx+'_mawpeak') 
-                ch.trig.threshold = self.look_rdata(idx+'_threshold') + 0x8000000
-                ch.trig.high_threshold = self.look_rdata(idx+'_hithreshold') + 0x8000000
-                ch.trig.out_pulse_length = self.look_rdata(idx+'_out_pulse')
+
 
         for gr in self.dev.groups:
             if gr.idx in groups:
@@ -240,7 +262,13 @@ class scout_configure():
                 gr.sum_trig.out_pulse_length = self.look_rdata(idx+'_out_pulse') 
                 gr.sum_trig.maw_gap_time = self.look_rdata(idx+'_mawgap') 
                 gr.sum_trig.maw_peaking_time = self.look_rdata(idx+'_mawpeak') 
-                gr.raw_window = self.look_rdata('gate_window')
+                ## This should be its own parameter and not share with raw_window ... orrr ... make it a toggle and set same??
+                ## if td['record_waveforms'] set to gate_window, else 0
+                #gr.raw_window = self.look_rdata('gate_window')
+                if td['record_waveforms']:
+                    gr.raw_window = self.look_rdata('gate_window')
+                else:
+                    gr.raw_window = 0
         self.dev.close()
         self.dev.__del__()
 

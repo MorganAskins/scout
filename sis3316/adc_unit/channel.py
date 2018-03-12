@@ -25,7 +25,7 @@ from trigger import Adc_trigger
 
 class Adc_channel(object):
 	
-	__slots__ = ('group', 'idx', 'cid', 'trig', 'gid', 'unit_noidx', 'board') # Restrict attribute list (foolproof).
+	__slots__ = ('group', 'idx', 'cid', 'trig', 'gid', 'unit_noidx', 'board', 'realcid') # Restrict attribute list (foolproof).
 
 	_conf_params = [
 			'event_format_mask',
@@ -49,6 +49,7 @@ class Adc_channel(object):
 		self.idx = self.gid * const.CHAN_PER_GRP + self.cid 
 		
 		self.trig = Adc_trigger(self, self.gid, self.cid)
+
 		
 		
 	def bank_read(self, bank, dest, wcount, woffset = 0):
@@ -102,8 +103,8 @@ class Adc_channel(object):
 		for spell in magic:
 			self.board.write(reg, spell)
 			#~ print hex(spell)
-			usleep(10) #Doc.: The logic needs approximately 7 usec to execute a command.
-	
+                        # Update: Actually, doc now says 23 usec, and i'm in no rush ...
+			usleep(50) #Doc.: The logic needs approximately 7 usec to execute a command.
 	
 	@property
 	def termination(self):

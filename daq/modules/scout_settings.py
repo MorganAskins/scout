@@ -191,7 +191,7 @@ class detector_table(QtGui.QTableWidget):
     def init_data(self):
         ''' List of data hold on this tab '''
         self.data_list = ['nim_ti_as_te', 'extern_ts_clr_ena', 'extern_trig_ena',
-                'feedback_int_as_ext', 'ch_format', 'extern_trig', 'invert',
+                'feedback_int_as_ext', 'ch_format', 'extern_trig', 'record_waveforms',
                 'coincidence', 'lemo_ti_to_te', 'int_feedback_select_register']
         self.rows = len(self.data_list)
 
@@ -411,7 +411,7 @@ class channel_table(QtGui.QTableWidget):
         def chstr(item):
             return 'ch_'+str(self.channel)+item
         self.data_list = [ chstr('_enable'), chstr('_threshold'),
-                chstr('_hithreshold'), chstr('_gain'), chstr('_dacoffset'),
+                chstr('_hithreshold'), chstr('_gain'), chstr('_dacoffset'), chstr('_invert'),
                 chstr('_triggerdelay'), chstr('_cfd_ena'), chstr('_trig_enable'), 
                 chstr('_hisuppress_enable'), chstr('_mawgap'), chstr('_mawpeak'),
                 chstr('_out_pulse') ]

@@ -182,16 +182,16 @@ class scout():
                 for ch in range(self.hv_chan):
                     this_run_d[ch][item] = \
                             self.hv.GetParameter(ch, item)
-        self.__hvinfo__[self.run_num]=this_run_d
+        self._hvinfo[self.run_num]=this_run_d
         with open(json_name, 'wb') as fp:
-            json.dump(self.__hvinfo__, fp, sort_keys=True, indent=2)
+            json.dump(self._hvinfo, fp, sort_keys=True, indent=2)
 
 
     def __scout_info__(self):
         # Collect: samples, header_size, enabled channels
-        self.__info__ = {} 
+        self._info = {} 
         self.hv_chan = 4
-        self.__hvinfo__={}
+        self._hvinfo={}
         self.hv = pycaen()
         self.run_num = 0
         chan_count = 0
@@ -199,20 +199,26 @@ class scout():
             idx = 'ch_%i_enable' % ch
             if self.configure.toggle_data[idx]:
                 chan_count += 1
-        self.__info__['channels'] = chan_count
+        self._info['channels'] = chan_count
         format = self.configure.ranged_data['ch_format']['setpoint']
         match = lambda a, b: 1 if a & b else 0
         headsize = 4*( 3+match(format, 0b1)*7+match(format, 0b10)*2+\
                 match(format, 0b100)*3+match(format, 0b1000)*2 )
-        samplesize = 2*self.configure.ranged_data['gate_window']['setpoint']
-        self.__info__['event_size'] = headsize+samplesize
+        samplesize = 2*self.configure.ranged_data['gate_window']['setpoint'] \
+                *self.configure.toggle_data['record_waveforms']
+        self._info['event_size'] = headsize+samplesize
 
     def __run__(self, length, fname=None):
         if not fname:
             fname = self.fname
         self.__save_hv_state__()
-        readout(self.connection.sis_address(), 3333, 
-                fname, range(0,16), length, self.stderr, self.__info__ )
+        while True:
+            takedata = readout(self.connection.sis_address(), 3333, 
+                    fname, range(0,16), length, self.stderr, self._info )
+            if takedata:
+                break
+            print 'take data was false, try again in 10s'
+            time.sleep(10)
         self.run_num += 1
         myargv = ctypes.c_char_p*2
         argv = myargv('python', fname)
@@ -230,3 +236,5 @@ class scout():
             seq.insert(-1, counter)
             newname = ''.join(seq)
             self.__run__(length, fname=newname)
+            sys.stderr.write('Completed Run %i of %i\n' % (i+1, run_count))
+            sys.stderr.flush()

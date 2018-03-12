@@ -32,6 +32,7 @@ public:
   uint32_t format;
   uint32_t chan_size;
   uint32_t samples;
+  std::vector<uint16_t> chan_list;
   RootMaker* rMaker;
 };
 

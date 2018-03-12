@@ -14,10 +14,11 @@ RootMaker::~RootMaker()
   //delete this->gate;
   //delete this->waveform;
 }
-void RootMaker::setup_tree(uint32_t evts, uint32_t chans, uint32_t format, uint32_t samples)
+void RootMaker::setup_tree(uint32_t evts, std::vector<uint16_t> chan_list, uint32_t format, uint32_t samples)
 {
   this->evts = evts;
-  this->chans = chans;
+  this->chans = chan_list.size();
+  this->chan_list = chan_list;
   this->format = format;
   this->samples = samples;
   uint32_t num_gates = 0;
@@ -25,12 +26,15 @@ void RootMaker::setup_tree(uint32_t evts, uint32_t chans, uint32_t format, uint3
     num_gates += 6;
   if(format & 0b10)
     num_gates += 2;
-  this->gate = new UInt_t*[chans];
+  this->gate = new UInt_t*[num_gates];
   this->waveform = new int*[chans];
   for(uint32_t i=0; i<chans; i++)
   {
-    this->gate[i] = new UInt_t[num_gates];
     this->waveform[i] = new int[this->samples];
+  }
+  for(uint32_t i=0; i<num_gates; i++)
+  {
+    this->gate[i] = new UInt_t[chans];
   }
   this->num_gates = num_gates;
 
@@ -42,15 +46,29 @@ void RootMaker::setup_tree(uint32_t evts, uint32_t chans, uint32_t format, uint3
   // Loop over channels to write individual waveform ntuples
   for(uint32_t i=0; i<chans; i++)
   {
-    std::string gname = "gate" + std::to_string(i);
-    std::string gtype = gname + "[" + std::to_string(num_gates) + "]/i";
-    dataTree->Branch(gname.c_str(), this->gate[i], gtype.c_str());
-
-    std::string wfname = "waveform" + std::to_string(i);
+    std::string wfname = "waveform" + std::to_string( chidx_flip(this->chan_list[i]) );
     std::string wftype = wfname + "[" + std::to_string(this->samples) + "]/I";
     dataTree->Branch(wfname.c_str(), this->waveform[i], wftype.c_str());
   }
+  // Loop over gates to write individual gates
+  for(uint32_t i=0; i<num_gates; i++)
+  {
+    std::string gname = "gate" + std::to_string(i);
+    std::string gtype = gname + "[" + std::to_string(chans) + "]/i";
+    dataTree->Branch(gname.c_str(), this->gate[i], gtype.c_str());
+  }
 
+}
+
+uint16_t RootMaker::chidx_flip( uint16_t chidx )
+{
+    // This is required due to a weird bug in the struck sis3316
+    // where channel pairs are flipped
+    uint16_t group_id = static_cast<uint16_t>(chidx / 4);
+    uint16_t cid = chidx % 4;
+    uint16_t swap_box[4] = { 1, 0, 3, 2 };
+    uint16_t swapcid = swap_box[cid];
+    return group_id*4 + swapcid;
 }
 
 void RootMaker::header_tree()
@@ -73,17 +91,17 @@ void RootMaker::load_event(event& ev)
     this->timestamp = cur_chan.timestamp;
     if( this->format & 0b1 )
     {
-      this->gate[ch][ele++] = static_cast<UInt_t>(cur_chan.gate1);
-      this->gate[ch][ele++] = static_cast<UInt_t>(cur_chan.gate2);
-      this->gate[ch][ele++] = static_cast<UInt_t>(cur_chan.gate3);
-      this->gate[ch][ele++] = static_cast<UInt_t>(cur_chan.gate4);
-      this->gate[ch][ele++] = static_cast<UInt_t>(cur_chan.gate5);
-      this->gate[ch][ele++] = static_cast<UInt_t>(cur_chan.gate6);
+      this->gate[ele++][ch] = static_cast<UInt_t>(cur_chan.gate1);
+      this->gate[ele++][ch] = static_cast<UInt_t>(cur_chan.gate2);
+      this->gate[ele++][ch] = static_cast<UInt_t>(cur_chan.gate3);
+      this->gate[ele++][ch] = static_cast<UInt_t>(cur_chan.gate4);
+      this->gate[ele++][ch] = static_cast<UInt_t>(cur_chan.gate5);
+      this->gate[ele++][ch] = static_cast<UInt_t>(cur_chan.gate6);
     }
     if( this->format & 0b10 )
     {
-      this->gate[ch][ele++] = static_cast<UInt_t>(cur_chan.gate7);
-      this->gate[ch][ele++] = static_cast<UInt_t>(cur_chan.gate8);
+      this->gate[ele++][ch] = static_cast<UInt_t>(cur_chan.gate7);
+      this->gate[ele++][ch] = static_cast<UInt_t>(cur_chan.gate8);
     }
     for(uint32_t sam=0; sam < this->samples; sam++)
     {
